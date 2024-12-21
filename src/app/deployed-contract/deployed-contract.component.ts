@@ -52,7 +52,6 @@ export class DeployedContractComponent implements OnInit {
     theContract.$aci.functions[_theFunctionIndex].loading = true;
 
     // fetch all entered params
-    const jsonTypes = ['map', 'list', 'tuple', 'record', 'bytes'];
 
     const callParams: any[] = this.contract.$aci.functions[_theFunctionIndex].arguments.map(
       (oneArg) => {
@@ -69,11 +68,9 @@ export class DeployedContractComponent implements OnInit {
     console.log('Compiler: gasAmountInUnits:', this.compiler.gasAmountInUnits);
     console.log('Compiler: gasPriceInAettos:', this.compiler.gasPriceInAettos);
 
-    this.compiler.txAmountInAettos > 0 ? (txParams.amount = this.compiler.txAmountInAettos) : true;
-    this.compiler.gasAmountInUnits > 0 ? (txParams.gas = this.compiler.gasAmountInUnits) : true;
-    this.compiler.gasPriceInAettos > 0
-      ? (txParams.gasPrice = this.compiler.gasPriceInAettos)
-      : true;
+    if (this.compiler.txAmountInAettos > 0) txParams.amount = this.compiler.txAmountInAettos;
+    if (this.compiler.gasAmountInUnits > 0) txParams.gas = this.compiler.gasAmountInUnits;
+    if (this.compiler.gasPriceInAettos > 0) txParams.gasPrice = this.compiler.gasPriceInAettos;
 
     // "Apply" parameters a.k.a call function
     console.log('Called function:', _theFunction);
@@ -89,7 +86,7 @@ export class DeployedContractComponent implements OnInit {
       console.log('Decoded result', callresult.decodedResult);
       //this.logMessage(_theFunction + " called successfully :" + JSON.stringify(callresult, null, 2), "success",  this.contract._name)
       // handle "false" result case not displaying call result data
-      callresult.decodedResult == false ? (callresult.decodedResult = 'false') : true;
+      if (callresult.decodedResult == false) callresult.decodedResult = 'false';
 
       /*    Handle various result types !
       false: done
@@ -169,9 +166,5 @@ export class DeployedContractComponent implements OnInit {
         // This can happen if the user denies clipboard permissions:
         console.error('Could not copy text:', err);
       });
-  }
-
-  logTemp(something: any) {
-    true;
   }
 }

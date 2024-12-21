@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CompilerService } from '../compiler.service';
 import { AuthService } from '../services/auth/auth.service';
 import { IPopup } from 'ngx-ng2-semantic-ui';
@@ -8,7 +8,7 @@ import { IPopup } from 'ngx-ng2-semantic-ui';
   templateUrl: './tx-values.component.html',
   styleUrls: ['./tx-values.component.css'],
 })
-export class TxValuesComponent implements OnInit {
+export class TxValuesComponent {
   units = {
     aetto: 0,
     femtoae: 3,
@@ -40,9 +40,7 @@ export class TxValuesComponent implements OnInit {
     public auth: AuthService,
   ) {}
 
-  ngOnInit() {}
-
-  valueChange(e) {
+  valueChange() {
     //this.currentValue < 1 ? this.currentValue = 0 : true
     //console.log(this.getCurrentInput())
     this.calculateFinalValue();
@@ -60,7 +58,7 @@ export class TxValuesComponent implements OnInit {
     popup.close();
   }
 
-  manualGasChange(e) {
+  manualGasChange() {
     //this.currentValue < 1 ? this.currentValue = 0 : true
     this.compiler.gasAmountInUnits = this.manualGasValue;
     console.log(this.manualGasValue);
@@ -86,7 +84,7 @@ export class TxValuesComponent implements OnInit {
     }
   }
 
-  manualGasPriceChange(e) {
+  manualGasPriceChange() {
     //this.currentValue < 1 ? this.currentValue = 0 : true
     this.compiler.gasPriceInAettos = this.manualGasPriceValue;
     console.log(this.manualGasPriceValue);

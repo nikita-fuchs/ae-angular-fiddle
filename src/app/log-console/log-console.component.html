@@ -2,7 +2,7 @@
   <div
     class="ui segment innereventlog triggerbar"
     style="cursor: pointer; margin: 0"
-    (click)="toggle($event)"
+    (click)="toggle()"
   >
     <i class="chevron circle right icon" style="margin-left: 5px"></i>
     <p style="display: inline">Event Logs</p>
@@ -69,6 +69,6 @@
             <sui-accordion [transition]="'fade'" [transitionDuration]="300" [closeOthers]="false">
                 <app-one-log *ngFor="let oneLog of logs; let i = index" class="oneLog" [log]="oneLog" [open]="true" ></app-one-log>
             </sui-accordion>
-           
+
         </div> -->
 </div>

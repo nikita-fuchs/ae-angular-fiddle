@@ -1,4 +1,4 @@
-export class Contract<T> {
+export class Contract {
   public contractUID = '';
   public code: string;
   public showInTabs = true;
@@ -11,9 +11,9 @@ export class Contract<T> {
 
   constructor(params: Record<string, any>) {
     this.contractUID = String(Date.now());
-    params._nameInTab != undefined ? (this.nameInTab = params._nameInTab) : true;
-    params._shareId != undefined ? (this.shareId = params._shareId) : true;
-    params._code != undefined ? (this.code = params._code) : (this.code = `your ae code`);
+    if (params._nameInTab != undefined) this.nameInTab = params._nameInTab;
+    if (params._shareId != undefined) this.shareId = params._shareId;
+    this.code = params._code ?? `your ae code`;
   }
 
   //experimental

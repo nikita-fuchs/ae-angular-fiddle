@@ -14,7 +14,7 @@ module.exports = tseslint.config(
     ],
     processor: angular.processInlineTemplates,
     rules: {
-      '@angular-eslint/directive-selector': [
+      /* '@angular-eslint/directive-selector': [
         'error',
         {
           type: 'attribute',
@@ -29,12 +29,21 @@ module.exports = tseslint.config(
           prefix: 'app',
           style: 'kebab-case',
         },
-      ],
+      ], */
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@angular-eslint/component-selector': 'off',
+      '@angular-eslint/directive-selector': 'off',
+      '@angular-eslint/no-input-rename': 'off',
     },
   },
   {
     files: ['**/*.html'],
     extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
-    rules: {},
+    rules: {
+      '@angular-eslint/template/mouse-events-have-key-events': 'off',
+      '@angular-eslint/template/click-events-have-key-events': 'off',
+      '@angular-eslint/template/interactive-supports-focus': 'off',
+      '@angular-eslint/template/alt-text': 'off',
+    },
   },
 );

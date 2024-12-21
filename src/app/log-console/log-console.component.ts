@@ -1,17 +1,7 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
-  ChangeDetectorRef,
-  Inject,
-  ViewChild,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { EventlogService } from '../services/eventlog/eventlog.service';
 import { StateService } from '../services/state.service';
 import { TerminalPrompt } from '../repl-terminal/TerminalPrompt';
-import { StorageService } from 'ngx-webstorage-service';
 import { LocalStorageService } from '../local-storage.service';
 import { Socket } from 'phoenix-channels';
 import { ILog } from '../helpers/interfaces';
@@ -70,10 +60,10 @@ export class LogConsoleComponent implements OnInit {
     console.log('REPL: trying to join');
     this.channel
       .join()
-      .receive('ok', (resp) => {
+      .receive('ok', () => {
         console.log('REPL: Joined aerepl lobby.');
       })
-      .receive('error', (resp) => {
+      .receive('error', () => {
         console.log('REPL: Could not establish the connection.');
         alert('Could not establish the connection.');
       });
@@ -87,7 +77,7 @@ export class LogConsoleComponent implements OnInit {
     console.log('REPL: Input:' + input);
 
     switch (input.trim()) {
-      case ':r':
+      case ':r': {
         const contracts_raw = this.localStorage.getAllContracts();
         const contracts = contracts_raw.map(function (c) {
           const filename = (c as any).nameInTab + '.aes';
@@ -97,17 +87,13 @@ export class LogConsoleComponent implements OnInit {
             content: content,
           };
         });
-
         this.channel.push('load', { files: contracts, user_session: this.session });
-
         break;
-
+      }
       default:
         this.channel.push('query', { input: input, user_session: this.session });
     }
   }
-
-  logActiovated($event) {}
 
   ngOnInit() {
     // setup a default first log:
@@ -123,11 +109,11 @@ export class LogConsoleComponent implements OnInit {
     //setup subscription for new logs
     this.eventlog._newLog.subscribe((log: ILog) => {
       //empty default log message when first true log comes in
-      this.logs[this.logs.length - 1].message == 'Event log initialized.' ? (this.logs = []) : '';
+      if (this.logs[this.logs.length - 1].message == 'Event log initialized.') this.logs = [];
       // check if the new log is expanded, if not, explicitly set it to true
-      log.expanded == undefined ? (log.expanded = true) : '';
+      log.expanded ??= true;
       // set the last log to not expanded
-      this.logs.length >= 1 ? (this.logs[this.logs.length - 1].expanded = false) : '';
+      if (this.logs.length >= 1) this.logs[this.logs.length - 1].expanded = false;
       this.logs.push(log);
     });
   }
@@ -145,7 +131,7 @@ export class LogConsoleComponent implements OnInit {
     this.terminal.setFocused(setting);
   }
 
-  toggle($event) {
+  toggle() {
     console.log('Resize: click initiated');
     this.state.consoleOpen = !this.state.consoleOpen;
     this.detector.detectChanges();

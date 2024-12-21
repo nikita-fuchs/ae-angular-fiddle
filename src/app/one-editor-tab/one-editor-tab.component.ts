@@ -9,17 +9,18 @@ import {
 } from '@angular/core';
 import { debounceTime } from 'rxjs/internal/operators/debounceTime';
 import { distinctUntilChanged } from 'rxjs/operators';
+import type Monaco from 'monaco-editor';
 
 import { environment } from 'src/environments/environment';
 import { CompilerService } from '../compiler.service';
-import { Contract } from '../contracts/hamster';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { ClipboardService } from 'ngx-clipboard';
 import { Subscription, Subject } from 'rxjs';
-import { setInterval, clearInterval } from 'timers';
 import { AuthService } from '../services/auth/auth.service';
 import { StateService } from '../services/state.service';
 import { IActiveContract } from '../helpers/interfaces';
+
+declare const monaco: typeof Monaco;
 
 @Component({
   selector: 'app-one-editor-tab',
@@ -29,7 +30,6 @@ import { IActiveContract } from '../helpers/interfaces';
 export class OneEditorTabComponent implements OnInit, OnDestroy {
   // angular 9 bullshit start
   codeGeneratorVisible = false;
-  closeCodeEditor() {}
   generatedCode: any = false;
   // angular 9 bullshit end
 
@@ -42,7 +42,7 @@ export class OneEditorTabComponent implements OnInit, OnDestroy {
   isDimmed = false;
   contractID: string | boolean = false; // necessary for the link copying dimming
 
-  editorInstance: monaco.editor.IStandaloneCodeEditor; // the editor, initialized by the component
+  editorInstance: Monaco.editor.IStandaloneCodeEditor; // the editor, initialized by the component
 
   // workaround for annoying angular bug firing events dozens of times: collect hashes of errors in this map and set new ones only if hash is unused
   lastError: string;
@@ -172,7 +172,6 @@ export class OneEditorTabComponent implements OnInit, OnDestroy {
 
         console.log('[one-editor-tab] New change received for contract:', item['contractUID']);
 
-        this.activeContract.latestACI;
         this.save();
 
         //this.changeDetectorRef.detectChanges()
@@ -210,7 +209,7 @@ export class OneEditorTabComponent implements OnInit, OnDestroy {
     });
   }
 
-  initializeEditorObject(theEditor: monaco.editor.IStandaloneCodeEditor) {
+  initializeEditorObject(theEditor: Monaco.editor.IStandaloneCodeEditor) {
     //console.log("The editor:", theEditor._actions["editor.foldAll"]._run());
     //console.log("The editor:", theEditor);
     this.editorInstance = theEditor;
@@ -314,7 +313,7 @@ export class OneEditorTabComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(environment.compilerRequestDelay), // wait 1 sec after the last event before emitting last event
       ) // only emit if value is different from previous value
-      .subscribe((something) => {
+      .subscribe(() => {
         console.log(">>> Compiler call throttler let code 'change' pass");
         // Call your function which calls API or do anything you would like do after a lag of 1 sec
         this.change();
@@ -362,7 +361,7 @@ export class OneEditorTabComponent implements OnInit, OnDestroy {
             this.activeContract.errorHighlights = errorHighlights;
             this.save(); // like this ?
             this.currentDecorations = this.editorInstance.deltaDecorations([], errorHighlights);
-          } catch (e) {
+          } catch {
             console.log('tried adding highlights...');
           }
 
@@ -381,7 +380,8 @@ export class OneEditorTabComponent implements OnInit, OnDestroy {
       this.currentDecorations = this.editorInstance.deltaDecorations(this.currentDecorations, []);
       this.activeContract.errorHighlights = [];
       this.activeContractChange.emit(this.activeContract);
-    } catch (e) {}
+      // eslint-disable-next-line no-empty
+    } catch {}
   }
 
   setupCodeSharingHighlighters() {
@@ -417,7 +417,6 @@ export class OneEditorTabComponent implements OnInit, OnDestroy {
         console.log('[one-editor-tab] New change received for contract:', item['contractUID']);
 
         this.save();
-        this.activeContract.latestACI;
 
         //this.changeDetectorRef.detectChanges()
         console.log('Aci im one editor', this.activeContract.latestACI);
@@ -449,7 +448,7 @@ export class OneEditorTabComponent implements OnInit, OnDestroy {
           this.activeContract.errorHighlights = errorHighlights;
           this.save(); // like this ?
           this.currentDecorations = this.editorInstance.deltaDecorations([], errorHighlights);
-        } catch (e) {
+        } catch {
           console.log('tried adding highlights, but failed, for:', this.activeContract.contractUID);
         }
       } else {
@@ -475,9 +474,8 @@ export class OneEditorTabComponent implements OnInit, OnDestroy {
   hash = function hashCode(o, l?) {
     o = this.sortObjectKeys(o);
     l = l || 2;
-    let i,
-      c,
-      r = [];
+    let i, c;
+    const r = [];
     for (i = 0; i < l; i++) r.push(i * 268803292);
     function stringify(o) {
       let i, r;

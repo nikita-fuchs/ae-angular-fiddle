@@ -19,7 +19,7 @@ export class EditorAutoResizerDirective implements OnInit, AfterViewInit {
   ) {
     this.domElement = this.elementRef.nativeElement as HTMLElement;
 
-    this.state.consoleTrigger.subscribe((foo) => {
+    this.state.consoleTrigger.subscribe(() => {
       console.log('Resize: click received!');
       this.setHeight();
     });
@@ -57,7 +57,7 @@ export class EditorAutoResizerDirective implements OnInit, AfterViewInit {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
       return rect.top + scrollTop;
-    } catch (e) {
+    } catch {
       return 0;
     }
   }

@@ -102,9 +102,11 @@ export class ContractMenuSidebarComponent implements OnInit {
     // make compiler emit event
     // take the ACI/ContractBase the compiler stores
     // "If the user is trying to interact with an existing contract and something is in the address field, try bringing up the existing contract, else deploy a new one"
-    _existingContract && isValidContractAddress(this.addressOfExistingContract)
-      ? this.compiler.compileAndDeploy(params, this.addressOfExistingContract)
-      : this.compiler.compileAndDeploy(params);
+    const address =
+      _existingContract && isValidContractAddress(this.addressOfExistingContract)
+        ? this.addressOfExistingContract
+        : undefined;
+    this.compiler.compileAndDeploy(params, address);
   }
 
   copyAddress() {
@@ -131,7 +133,7 @@ export class ContractMenuSidebarComponent implements OnInit {
 
     setInterval(async () => {
       // call with "false" to query faucet for balance if it's too low, topup not implemented yet though
-      this.currentSDKsettings != undefined ? await this.fetchAllBalances(true) : true;
+      if (this.currentSDKsettings != undefined) await this.fetchAllBalances(true);
     }, 3000);
 
     // fires when new accounts are available
@@ -150,7 +152,7 @@ export class ContractMenuSidebarComponent implements OnInit {
         }
 
         //  Get balances of all available addresses
-        this.currentSDKsettings.addresses != undefined ? await this.fetchAllBalances() : true;
+        if (this.currentSDKsettings.addresses != undefined) await this.fetchAllBalances();
 
         console.log('This is what currentSDKsettings now look like:', this.currentSDKsettings);
       },
@@ -168,9 +170,8 @@ export class ContractMenuSidebarComponent implements OnInit {
         this.currentError = {};
 
         // check if there is an init function present for the current generated ACI Trainee TODO task: do this in template !
-        this.initACI.name != undefined
-          ? (this.initFunctionIsPresent = this.checkIfInitFunctionIsPresent())
-          : true;
+        if (this.initACI.name != undefined)
+          this.initFunctionIsPresent = this.checkIfInitFunctionIsPresent();
 
         console.log('Current error is:', this.currentError);
         //this.initACI == null ? console.log("Jetzt init ACI leer!") : true;
@@ -278,7 +279,7 @@ export class ContractMenuSidebarComponent implements OnInit {
         balance = await this.compiler.Chain.getBalance(_address);
         //console.log("als balance für " + _address + " kam:", balance);
         this.changeDetectorRef.detectChanges();
-      } catch (e) {
+      } catch {
         balance = 0;
         this.changeDetectorRef.detectChanges();
       }
@@ -295,7 +296,7 @@ export class ContractMenuSidebarComponent implements OnInit {
     let found = false;
 
     this.initACI.functions.forEach((oneFunction) => {
-      oneFunction.name == 'init' ? (found = true) : null;
+      if (oneFunction.name == 'init') found = true;
     });
 
     console.log('Init found ?', found);

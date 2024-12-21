@@ -1,18 +1,6 @@
-/// <reference path="../../../node_modules/monaco-editor/monaco.d.ts" />
-
-import {
-  Component,
-  OnInit,
-  Input,
-  Compiler,
-  HostBinding,
-  OnChanges,
-  SimpleChanges,
-  ChangeDetectorRef,
-  AfterViewInit,
-  OnDestroy,
-} from '@angular/core';
-import { CompilerService, EncodedACI } from '../compiler.service';
+import { Component, OnInit, Input, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import type monaco from 'monaco-editor';
+import { CompilerService } from '../compiler.service';
 import { Contract } from '../contracts/hamster';
 import { AeForUsers } from '../contracts/AeForUsers';
 import { AeUnlockOnTime } from '../contracts/AeUnlockOnTime';
@@ -20,7 +8,6 @@ import { FungibleToken } from '../contracts/FungibleToken';
 import { BasicNFT } from '../contracts/BasicNFT';
 import { Subscription, Subject } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
-import { distinctUntilChanged } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { ClipboardService } from 'ngx-clipboard';
@@ -34,7 +21,7 @@ import { StateService } from '../services/state.service';
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.css'],
 })
-export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
+export class EditorComponent implements OnInit, OnDestroy {
   @Input()
   // logger start //
   /* logs: NgxLogMessage[] = [
@@ -181,7 +168,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         codeToHighlight = parameter.get('highlight') || '';
         try {
           this.highlightedRows = codeToHighlight.split('-', 4);
-        } catch (e) {}
+          // eslint-disable-next-line no-empty
+        } catch {}
       }
       console.log('highlight:', codeToHighlight);
       console.log('Highlighted rows:', this.highlightedRows);
@@ -347,7 +335,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     // If the compiler asks for code, give it to him and deploy the contract
-    this.fetchActiveCodeSubscription = this.compiler._fetchActiveCode.subscribe((item) => {
+    this.fetchActiveCodeSubscription = this.compiler._fetchActiveCode.subscribe(() => {
       console.log('Im editor angekommen !');
       //console.log("Current code ist:", this.contract.code)
 
@@ -397,7 +385,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /// WIP: Enable only if user is logged in. example: https://microsoft.github.io/monaco-editor/playground.html#interacting-with-the-editor-adding-a-command-to-an-editor-instance
     // Step 1:
-    const myCondition = this.editorInstance.createContextKey('myCondition', false);
+    // const myCondition = this.editorInstance.createContextKey('myCondition', false);
 
     // custom context menu options
     this.editorInstance.addAction({
@@ -516,9 +504,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   // saves all contracts
   saveActiveContractChangesToContractsArray() {
     this.contracts.forEach((oneContract, index, array) => {
-      oneContract.contractUID == this.activeContract.UID
-        ? (array[index] = this.activeContract)
-        : true;
+      if (oneContract.contractUID == this.activeContract.UID) array[index] = this.activeContract;
       //and save:
       this.localStorage.storeAllContracts(this.contracts);
     });
@@ -546,7 +532,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       this.currentDecorations = this.editorInstance.deltaDecorations(this.currentDecorations, []);
       this.activeContract.errorHighlights = [];
       this.saveActiveContractChangesToContractsArray();
-    } catch (e) {}
+      // eslint-disable-next-line no-empty
+    } catch {}
   }
 
   // trigger whether the contract is displayed in the tabs or not
@@ -558,22 +545,21 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       //console.log("Editor: In this case, these are the contracts:", this.contracts)
       if (oneContract.contractUID == _params.contract.contractUID) {
         switch (_params.triggerMode) {
-          case 'off':
+          case 'off': {
             // check if at least another tab is open
             let tabsOpenCount = 0;
             this.contracts.forEach((contract) => {
-              contract.showInTabs ? tabsOpenCount++ : true;
+              if (contract.showInTabs) tabsOpenCount++;
             });
             // if at least 2 are open, close current tab
-            tabsOpenCount >= 2 ? (oneContract.showInTabs = false) : true;
+            if (tabsOpenCount >= 2) oneContract.showInTabs = false;
             break;
+          }
           case 'on':
             oneContract.showInTabs = true;
             break;
           case 'trigger':
-            oneContract.showInTabs == true
-              ? (oneContract.showInTabs = false)
-              : (oneContract.showInTabs = true);
+            oneContract.showInTabs = !oneContract.showInTabs;
             break;
           default:
             break;
@@ -630,9 +616,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   hash = function hashCode(o, l?) {
     o = this.sortObjectKeys(o);
     l = l || 2;
-    let i,
-      c,
-      r: any = [];
+    let i, c;
+    const r = [];
     for (i = 0; i < l; i++) r.push(i * 268803292);
     function stringify(o) {
       let i: any;
@@ -682,13 +667,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       event.initEvent('resize', true, false);
       el.dispatchEvent(event);
     }, millisecondsDelay || 55);
-  }
-
-  ngAfterViewInit() {
-    /*   this.currentTabUID = this.activeContract.contractUID;
-      console.log("After view init fired")
-      this.changeDetectorRef.detectChanges()
-   */
   }
 
   ngOnDestroy() {

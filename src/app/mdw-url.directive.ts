@@ -1,19 +1,10 @@
-import {
-  Directive,
-  ElementRef,
-  Renderer2,
-  HostListener,
-  AfterViewInit,
-  OnInit,
-  AfterContentInit,
-  AfterViewChecked,
-} from '@angular/core';
+import { Directive, ElementRef, Renderer2, HostListener, AfterViewInit } from '@angular/core';
 import { CompilerService } from './compiler.service';
 
 @Directive({
   selector: '[mdwUrl]',
 })
-export class MdwUrlDirective implements AfterViewInit, OnInit, AfterContentInit, AfterViewChecked {
+export class MdwUrlDirective implements AfterViewInit {
   @HostListener('mouseenter') onMouseEnter() {
     /*  console.log("directive: in!") */
   }
@@ -32,18 +23,6 @@ export class MdwUrlDirective implements AfterViewInit, OnInit, AfterContentInit,
 
   ngAfterViewInit() {
     this.addUrl();
-  }
-
-  ngOnInit() {
-    //this.addUrl()
-  }
-
-  ngAfterContentInit() {
-    //this.addUrl()
-  }
-
-  ngAfterViewChecked() {
-    //this.addUrl()
   }
 
   addUrl() {
@@ -73,7 +52,6 @@ export class MdwUrlDirective implements AfterViewInit, OnInit, AfterContentInit,
     }
 
     let middlewareLink: string;
-    const generationsRegex = new RegExp(`^\d+$`, 'gm');
     const transactionHashRegex = new RegExp(`^th_[1-9A-HJ-NP-Za-km-z]{48,50}$`, 'gm');
     const oracleQueryRegex = new RegExp(`^ok_[1-9A-HJ-NP-Za-km-z]{48,50}$`, 'gm');
     const contractTransactionRegex = new RegExp(`^ct_[1-9A-HJ-NP-Za-km-z]{48,50}$`, 'gm');

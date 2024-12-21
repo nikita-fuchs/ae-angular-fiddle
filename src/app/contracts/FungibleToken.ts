@@ -1,4 +1,4 @@
-export class FungibleToken<T> {
+export class FungibleToken {
   public contractUID = '';
   public code: string;
   public showInTabs = true;
@@ -11,12 +11,12 @@ export class FungibleToken<T> {
 
   constructor(params: Record<string, any>) {
     this.contractUID = String(Date.now() + 3);
-    params._nameInTab != undefined ? (this.nameInTab = params._nameInTab) : true;
-    params._shareId != undefined ? (this.shareId = params._shareId) : true;
-    params._code != undefined
-      ? (this.code = params._code)
-      : (this.code = `
-    
+    if (params._nameInTab != undefined) this.nameInTab = params._nameInTab;
+    if (params._shareId != undefined) this.shareId = params._shareId;
+    this.code =
+      params._code ??
+      `
+
 // ISC License
 //
 // Copyright (c) 2017, aeternity developers
@@ -136,7 +136,7 @@ contract FungibleToken =
     require_balance(from_account, value)
     put(state{ balances[from_account] @ b = b - value })
     put(state{ balances[to_account = 0] @ b = b + value })
-    Chain.event(Transfer(from_account, to_account, value))`);
+    Chain.event(Transfer(from_account, to_account, value))`;
   }
 
   //experimental

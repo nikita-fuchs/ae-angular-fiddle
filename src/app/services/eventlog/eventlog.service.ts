@@ -12,8 +12,6 @@ export class EventlogService {
   public _newLog = new Subject<ILog>();
   _newLogEvent = this._newLog.asObservable();
 
-  constructor() {}
-
   public logs: any[] = [];
   public logSubscription: Subscription;
 

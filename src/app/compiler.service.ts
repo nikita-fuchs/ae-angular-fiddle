@@ -122,7 +122,7 @@ export class CompilerService {
     },
   };
 
-  public scanForWallets = async (successCallback) => {
+  public scanForWallets = async () => {
     this.Chain = new AeSdkAepp({
       name: 'APP',
       nodes: [
@@ -184,31 +184,21 @@ export class CompilerService {
 
   //sunset eventually, could be superseded bythis.detectWallets()
   public justScanForWallets = async (successCallback) => {
-    //const detector = new Detector({ connection: scannerConnection });
-
-    const handleWallets = async ({ wallets, newWallet }) => {
-      newWallet = newWallet || Object.values(wallets)[0];
+    const handleWallets: Parameters<typeof walletDetector>[1] = async ({ newWallet }) => {
       stopScan();
-      newWallet ? (this.cachedWallet = newWallet) : true;
+      this.cachedWallet = newWallet;
       console.log('superhero: newwallet:', newWallet);
-      console.log('superhero: wallets:', wallets);
-      console.log('superhero: cachedWallet', this.cachedWallet);
-      console.log('superhero: one wallet', Object.values(wallets)[0]);
-
-      const wallet = newWallet ? newWallet : wallets[this.aeternity.detectedWallet];
-      this.aeternity.detectedWallet = wallet.id;
+      this.aeternity.detectedWallet = newWallet.info.id;
       successCallback();
     };
 
     const scannerConnection = new BrowserWindowMessageConnection();
     const stopScan = walletDetector(scannerConnection, handleWallets);
-
-    //detector.scan(handleWallets);
   };
 
   public detectWallets = async () => {
     const connection = new BrowserWindowMessageConnection();
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const stopDetection = walletDetector(connection, async ({ newWallet }) => {
         console.log('Compiler: wallet detected', newWallet);
         stopDetection();
@@ -218,14 +208,11 @@ export class CompilerService {
   };
 
   public awaitInitializedChainProvider = async () => {
-    return new Promise<void>((resolve, reject) => {
-      let scanCount = 0;
-      var check = setInterval(() => {
-        if (this.Chain && this.Chain.currentWalletProvider) {
+    return new Promise<void>((resolve) => {
+      const check = setInterval(() => {
+        if (this.Chain?.currentWalletProvider) {
           clearInterval(check);
           resolve();
-        } else {
-          scanCount++;
         }
       }, 300);
     });
@@ -237,9 +224,8 @@ export class CompilerService {
     }, 200); // wait a bit to allow the toggle to change it's state before disabling it
 
     if (this.Chain) {
-      this.Chain.currentWalletProvider == 'extension'
-        ? await this.setupWebClient()
-        : await this.setupWalletClient();
+      if (this.Chain.currentWalletProvider == 'extension') await this.setupWebClient();
+      else await this.setupWalletClient();
     }
 
     //TODO: handle case of rejecting the wallet connection
@@ -282,11 +268,11 @@ export class CompilerService {
   };
 
   public setupWalletClient = () => {
-    this.initWalletSearch(this.onWalletSearchSuccess);
+    this.initWalletSearch();
   };
 
-  public initWalletSearch = async (successCallback) => {
-    await this.scanForWallets(successCallback);
+  public initWalletSearch = async () => {
+    await this.scanForWallets();
   };
 
   // ____ helpers end
@@ -353,10 +339,8 @@ export class CompilerService {
         onCompiler: new CompilerHttp(this.defaultOrCustomSDKsetting('compilerUrl')),
         accounts: this.defaultOrCustomSDKsetting('accounts'),
       });
-    } catch {
-      (e) => {
-        console.log("Shit, SDK setup didn't work:", e);
-      };
+    } catch (e) {
+      console.log("Shit, SDK setup didn't work:", e);
     }
     // place indicator for whether it's the wallet addon active or just web/testnet accounts etc.
     this.Chain.currentWalletProvider = 'web';
@@ -472,9 +456,9 @@ export class CompilerService {
         };
 
         // add manualtx params if defined
-        this.txAmountInAettos > 0 ? (txParams['amount'] = this.txAmountInAettos) : true;
-        this.gasAmountInUnits > 0 ? (txParams['gas'] = this.gasAmountInUnits) : true;
-        this.gasPriceInAettos > 0 ? (txParams['gasPrice'] = this.gasPriceInAettos) : true;
+        if (this.txAmountInAettos > 0) txParams['amount'] = this.txAmountInAettos;
+        if (this.gasAmountInUnits > 0) txParams['gas'] = this.gasAmountInUnits;
+        if (this.gasPriceInAettos > 0) txParams['gasPrice'] = this.gasPriceInAettos;
 
         const deployResult = await myContract.$deploy(
           _deploymentParams ? _deploymentParams : [],
@@ -565,7 +549,7 @@ export class CompilerService {
         myContract.$aci = aci;
 
         // also, add the deployment params
-        myContract.deployInfo ? (myContract.deployInfo.params = _deploymentParams) : true;
+        if (myContract.deployInfo) myContract.deployInfo.params = _deploymentParams;
 
         // if it was an existing contract, add the address to the deployInfo
         if (_existingContractAddress) {
@@ -585,7 +569,7 @@ export class CompilerService {
         // 5. tell sidebar about the new contract so it can store it
         this._notifyDeployedContract.next({ newContract: myContract, success: true });
       },
-      (error) => this.fetchErrorsFromDebugCompiler(sourceCode),
+      () => this.fetchErrorsFromDebugCompiler(sourceCode),
     );
     console.log('fetching error from debug compiler..');
 
@@ -596,11 +580,12 @@ export class CompilerService {
     return true;
   }
   async fetchErrorsFromDebugCompiler(sourceCode: string): Promise<string> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       console.log('fetching errors...');
       let returnValue;
       this.getErrorsFromDebugCompiler(sourceCode).subscribe(
-        (data: EncodedACI) => {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
         (error) => {
           console.log('Found the error:', error.error[0]);
           returnValue = error.error[0];
@@ -665,7 +650,7 @@ export class CompilerService {
 
         return rawACI;
       },
-      async (error) => {
+      async () => {
         //console.log("oooops fehler", error.error)
         const theError = await this.fetchErrorsFromDebugCompiler(sourceCode);
 
@@ -706,9 +691,7 @@ export class CompilerService {
       // add field to later store loading state (e.g. transaction being mined or waiting for local call..)
       fun.loading = false;
       // 2.5 ...generate a formgroup checking all the params, make the "options" types non-required
-      fun.arguments.forEach((arg, i, allArgs) => {
-        const controlls: any = [];
-
+      fun.arguments.forEach((arg, i) => {
         // add field to sotre current input value
         arg.currentInput = '';
         arg.IDEindex = i;
@@ -806,8 +789,7 @@ export class CompilerService {
 
   public setGlobalEditorSetting(key, value) {
     if (key == 'debugMode') {
-      //@ts-ignore
-      window.GlobalDebug(value, false);
+      (window as any).GlobalDebug(value, false);
     }
   }
 }
