@@ -75,9 +75,9 @@ import 'zone.js'; // Included with Angular CLI.
 };
 
 (window as any).GlobalDebug = (function () {
-  var savedConsole = console;
+  const savedConsole = console;
   return function (debugOn, suppressAll) {
-    var suppress = suppressAll || false;
+    const suppress = suppressAll || false;
     if (debugOn === false) {
       (console as any) = {};
       console.log = function () {};

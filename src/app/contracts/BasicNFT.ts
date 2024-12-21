@@ -1,15 +1,15 @@
 export class BasicNFT<T> {
-  public contractUID: string = '';
+  public contractUID = '';
   public code: string;
-  public showInTabs: boolean = true;
-  public nameInTab: string = 'template';
-  public shareId: string = '';
-  public activeTab: boolean = false;
+  public showInTabs = true;
+  public nameInTab = 'template';
+  public shareId = '';
+  public activeTab = false;
   public errorHighlights: any;
   public sharingHighlighters: any[] = [];
   public latestACI: any;
 
-  constructor(params: { [key: string]: any }) {
+  constructor(params: Record<string, any>) {
     this.contractUID = String(Date.now() + 5);
     params._nameInTab != undefined ? (this.nameInTab = params._nameInTab) : true;
     params._shareId != undefined ? (this.shareId = params._shareId) : true;

@@ -9,6 +9,8 @@ import {
   OnChanges,
   SimpleChanges,
   ChangeDetectorRef,
+  AfterViewInit,
+  OnDestroy,
 } from '@angular/core';
 import { CompilerService, EncodedACI } from '../compiler.service';
 import { Contract } from '../contracts/hamster';
@@ -32,7 +34,7 @@ import { StateService } from '../services/state.service';
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.css'],
 })
-export class EditorComponent implements OnInit {
+export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input()
   // logger start //
   /* logs: NgxLogMessage[] = [
@@ -40,7 +42,7 @@ export class EditorComponent implements OnInit {
   logStream$: any;
 
   // logger end //
-  isDimmed: boolean = false;
+  isDimmed = false;
 
   editorInstance: any; // the editor, initialized by the component
 
@@ -53,7 +55,7 @@ export class EditorComponent implements OnInit {
   currentDecorations: any;
 
   // debug - multiple instances running, or same code two times?
-  runTimes: number = 0;
+  runTimes = 0;
 
   // set the editor's style:
   //@HostBinding('attr.class') css = 'ui segment container';
@@ -74,13 +76,13 @@ export class EditorComponent implements OnInit {
 
   // Listen to compilation success (e.g. to remove highlights)
   codeGenerator: Subscription;
-  templateCode: string = '';
+  templateCode = '';
 
   // store all contractUIDs that are to be shown in the tabs
   activeTabUIDs: string[] = [];
 
   // the currently opened tab's UID
-  currentTabUID: string = '1574358512052';
+  currentTabUID = '1574358512052';
 
   // handles the case of event emitter emitting three error events instead of 1
   previousErrorHash: any = '';
@@ -173,7 +175,7 @@ export class EditorComponent implements OnInit {
       this.runTimes++;
       console.log('Run times:', this.runTimes);
       // get the parameters for code highlighting
-      var codeToHighlight: string = '';
+      let codeToHighlight = '';
 
       if (parameter.get('highlight') != undefined) {
         codeToHighlight = parameter.get('highlight') || '';
@@ -395,7 +397,7 @@ export class EditorComponent implements OnInit {
 
     /// WIP: Enable only if user is logged in. example: https://microsoft.github.io/monaco-editor/playground.html#interacting-with-the-editor-adding-a-command-to-an-editor-instance
     // Step 1:
-    var myCondition = this.editorInstance.createContextKey('myCondition', false);
+    const myCondition = this.editorInstance.createContextKey('myCondition', false);
 
     // custom context menu options
     this.editorInstance.addAction({
@@ -412,7 +414,7 @@ export class EditorComponent implements OnInit {
       // press the specified keys
       run: () => {
         console.log(this.compiler.activeCodeSelection);
-        let postData = {
+        const postData = {
           contract: this.activeContract.code,
           contractName: 'some',
           editorVersion: 1,
@@ -428,8 +430,8 @@ export class EditorComponent implements OnInit {
           .subscribe((data) => {
             console.log('Post hat ergeben?', data);
 
-            var constructedUrl;
-            var s = this.compiler.activeCodeSelection || '';
+            let constructedUrl;
+            const s = this.compiler.activeCodeSelection || '';
 
             // share code with our without highlighter
             if (s.endLineNumber != undefined) {
@@ -588,7 +590,7 @@ export class EditorComponent implements OnInit {
 
   addNewContract() {
     console.log('comparing.. right now there are', this.contracts.length);
-    let newContract = new Contract({});
+    const newContract = new Contract({});
     console.log('new contract ist:', newContract);
     this.contracts.push(newContract);
     this.localStorage.storeAllContracts(this.contracts);
@@ -618,7 +620,7 @@ export class EditorComponent implements OnInit {
   }
 
   toHex = function (_input) {
-    var ret =
+    let ret =
       ((_input < 0 ? 0x8 : 0) + ((_input >> 28) & 0x7)).toString(16) +
       (_input & 0xfffffff).toString(16);
     while (ret.length < 8) ret = '0' + ret;
@@ -628,13 +630,13 @@ export class EditorComponent implements OnInit {
   hash = function hashCode(o, l?) {
     o = this.sortObjectKeys(o);
     l = l || 2;
-    var i,
+    let i,
       c,
       r: any = [];
     for (i = 0; i < l; i++) r.push(i * 268803292);
     function stringify(o) {
-      var i: any;
-      var r: any = [];
+      let i: any;
+      let r: any = [];
       if (o === null) return 'n';
       if (o === true) return 't';
       if (o === false) return 'f';
@@ -675,8 +677,8 @@ export class EditorComponent implements OnInit {
   // if stupid-ass chrome won't render the editor but show it as a small square instead..
   triggerWindowRefresh(millisecondsDelay?: number) {
     setTimeout(() => {
-      var el = document; // This can be your element on which to trigger the event
-      var event = document.createEvent('HTMLEvents');
+      const el = document; // This can be your element on which to trigger the event
+      const event = document.createEvent('HTMLEvents');
       event.initEvent('resize', true, false);
       el.dispatchEvent(event);
     }, millisecondsDelay || 55);

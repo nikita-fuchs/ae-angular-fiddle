@@ -1,4 +1,4 @@
-import { AfterViewInit, Directive, ElementRef, Input, Renderer2 } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, Input, Renderer2, OnInit } from '@angular/core';
 import { fromEvent } from 'rxjs';
 import { debounceTime, throttleTime } from 'rxjs/operators';
 import { StateService } from '../services/state.service';
@@ -6,7 +6,7 @@ import { StateService } from '../services/state.service';
 @Directive({
   selector: '[appEditorAutoResizer]',
 })
-export class EditorAutoResizerDirective {
+export class EditorAutoResizerDirective implements OnInit, AfterViewInit {
   @Input() minHeight: number;
   @Input('fluidHeight') topOffset: number;
 
@@ -37,12 +37,12 @@ export class EditorAutoResizerDirective {
   }
 
   private setHeight() {
-    let tabHeight = document.getElementById('tabMenu').offsetHeight;
-    let menuHeight = document.getElementById('logoHeader').offsetHeight;
-    let viewportHeight = window.innerHeight;
-    let logConsoleHeight = document.getElementById('logConsole').offsetHeight;
+    const tabHeight = document.getElementById('tabMenu').offsetHeight;
+    const menuHeight = document.getElementById('logoHeader').offsetHeight;
+    const viewportHeight = window.innerHeight;
+    const logConsoleHeight = document.getElementById('logConsole').offsetHeight;
 
-    var height = viewportHeight - tabHeight - menuHeight - logConsoleHeight;
+    let height = viewportHeight - tabHeight - menuHeight - logConsoleHeight;
 
     // set min height instead of the calculated
     if (this.minHeight && height < this.minHeight) {

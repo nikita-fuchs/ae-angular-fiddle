@@ -13,7 +13,7 @@ export class ContractInLeftMenuComponent implements OnInit {
   @Output() public showInTabs = new EventEmitter();
 
   hover: boolean;
-  toggled: boolean = false;
+  toggled = false;
 
   // the label
   styleLabel: any = {

@@ -6,7 +6,7 @@ import { StateService } from '../services/state.service';
 @Directive({
   selector: '[appConsoleOpener]',
 })
-export class ConsoleOpenerDirective {
+export class ConsoleOpenerDirective implements AfterViewInit {
   @Input() minHeight: number;
   @Input('fluidHeight') topOffset: number;
   private domElement: HTMLElement;

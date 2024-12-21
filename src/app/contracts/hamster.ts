@@ -1,15 +1,15 @@
 export class Contract {
-  public contractUID: string = '';
+  public contractUID = '';
   public code: string;
-  public showInTabs: boolean = true;
-  public nameInTab: string = 'CryptoHamster';
-  public shareId: string = '';
-  public activeTab: boolean = false;
+  public showInTabs = true;
+  public nameInTab = 'CryptoHamster';
+  public shareId = '';
+  public activeTab = false;
   public errorHighlights: any;
   public sharingHighlighters: any[] = [];
   public latestACI: any;
 
-  constructor(params: { [key: string]: any }) {
+  constructor(params: Record<string, any>) {
     this.contractUID = String(Date.now());
     params._latestAcI != undefined ? (this.latestACI = params._latestAcI) : true;
     params._nameInTab != undefined ? (this.nameInTab = params._nameInTab) : true;

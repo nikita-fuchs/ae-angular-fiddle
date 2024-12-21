@@ -19,9 +19,9 @@ export class EventlogService {
 
   public log(log: ILog) {
     console.log('Log Service: : ', log);
-    let hours = new Date().getHours().toString();
-    let minutes = new Date().getMinutes().toString();
-    let time = hours + ':' + minutes;
+    const hours = new Date().getHours().toString();
+    const minutes = new Date().getMinutes().toString();
+    const time = hours + ':' + minutes;
     log.time = time;
     this.logs.push(log);
 

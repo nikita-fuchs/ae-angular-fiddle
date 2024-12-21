@@ -25,7 +25,7 @@ import { TerminalComponent } from '../repl-terminal/terminal.component';
 export class LogConsoleComponent implements OnInit {
   @ViewChild('terminal', { static: false }) terminal: TerminalComponent;
   logs: ILog[] = [];
-  activeTab: string = 'logs';
+  activeTab = 'logs';
 
   public login = 'you';
   public server = 'REPL';
@@ -35,7 +35,7 @@ export class LogConsoleComponent implements OnInit {
   private prompt;
 
   private pending_output = '';
-  public isReplFocused: boolean = false;
+  public isReplFocused = false;
 
   constructor(
     private eventlog: EventlogService,
@@ -45,14 +45,14 @@ export class LogConsoleComponent implements OnInit {
   ) {
     // use this to get all contracts in their latest state:
 
-    let socket = new Socket(this.serverUrl + '/socket');
+    const socket = new Socket(this.serverUrl + '/socket');
     socket.connect();
     console.log('REPL: socket= ' + socket);
     this.channel = socket.channel('repl_session:lobby', {});
     console.log('REPL: channel= ' + this.channel);
 
     this.channel.on('response', (payload) => {
-      var msg = payload.msg;
+      let msg = payload.msg;
       console.log('REPL: ' + msg);
       this.session = payload.user_session ? payload.user_session : this.session;
       msg = payload.msg.replace(/^\n|\n$/g, '');
@@ -82,16 +82,16 @@ export class LogConsoleComponent implements OnInit {
   onCommand(prompt: TerminalPrompt) {
     this.prompt = prompt;
 
-    let input = prompt.text;
+    const input = prompt.text;
 
     console.log('REPL: Input:' + input);
 
     switch (input.trim()) {
       case ':r':
-        let contracts_raw = this.localStorage.getAllContracts();
-        let contracts = contracts_raw.map(function (c) {
-          let filename = (c as any).nameInTab + '.aes';
-          let content = (c as any).code;
+        const contracts_raw = this.localStorage.getAllContracts();
+        const contracts = contracts_raw.map(function (c) {
+          const filename = (c as any).nameInTab + '.aes';
+          const content = (c as any).code;
           return {
             filename: filename,
             content: content,

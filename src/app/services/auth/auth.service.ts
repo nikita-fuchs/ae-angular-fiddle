@@ -45,7 +45,7 @@ export class AuthService {
   theUser: any;
 
   // workaround for stupid swatchMap rxJS thingy triggering twice after response
-  loginRetrieved: boolean = false;
+  loginRetrieved = false;
 
   fillingUpAccounts = {
     active: 'false',
@@ -171,8 +171,8 @@ export class AuthService {
       console.log('Login: fillup triggered');
       this.fillingUpAccounts.active = 'true';
 
-      var maxFourBusy: number = 0;
-      var keypairs: any[] = [];
+      let maxFourBusy = 0;
+      const keypairs: any[] = [];
       // enough of RxJS bullshit - just looping over the fillup request as long as is needed to fill up 4 accounts.
       setInterval(async () => {
         if (keypairs.length >= 4) {
@@ -181,7 +181,7 @@ export class AuthService {
         } else {
           if (maxFourBusy < 4) {
             maxFourBusy++;
-            var keypair = Crypto.generateKeyPair();
+            const keypair = Crypto.generateKeyPair();
 
             //console.log("Login: Keypair:", keypair)
 

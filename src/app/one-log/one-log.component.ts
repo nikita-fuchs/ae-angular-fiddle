@@ -67,9 +67,9 @@ export class OneLogComponent implements OnInit {
   };
 
   getTimeDate = () => {
-    var today = new Date();
-    var date = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear();
-    var time = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+    const today = new Date();
+    const date = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear();
+    const time = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
     return time + ' ' + date;
   };
 }

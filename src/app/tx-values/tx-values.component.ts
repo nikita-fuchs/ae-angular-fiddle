@@ -21,19 +21,19 @@ export class TxValuesComponent implements OnInit {
 
   objectKeys = Object.keys;
 
-  beOpen: boolean = false;
-  isDisabled: boolean = false;
+  beOpen = false;
+  isDisabled = false;
   currentInput: number;
   currentValue: number; // this is the essential value !
-  currentUnit: string = 'aetto';
+  currentUnit = 'aetto';
 
-  gasRadioButton: boolean = false;
+  gasRadioButton = false;
   manualGasValue: number;
-  lastManualGasValue: number = 1337;
+  lastManualGasValue = 1337;
 
-  gasPriceRadioButton: boolean = false;
+  gasPriceRadioButton = false;
   manualGasPriceValue: number;
-  lastManualGasPriceValue: number = 1000000000;
+  lastManualGasPriceValue = 1000000000;
 
   constructor(
     public compiler: CompilerService,
@@ -48,7 +48,7 @@ export class TxValuesComponent implements OnInit {
     this.calculateFinalValue();
   }
 
-  private showLoginNotification: boolean = true;
+  private showLoginNotification = true;
 
   public openPopup(popup: IPopup) {
     if (!this.auth.theUser && this.compiler.Chain.currentWalletProvider == 'web') {
@@ -70,8 +70,8 @@ export class TxValuesComponent implements OnInit {
 
   toggleGasRadioButton() {
     console.log('Clicked, toggle:', this.gasRadioButton);
-    let newValue = this.manualGasValue;
-    let oldValue = this.lastManualGasValue;
+    const newValue = this.manualGasValue;
+    const oldValue = this.lastManualGasValue;
 
     if (this.gasRadioButton) {
       this.lastManualGasValue = newValue;
@@ -96,8 +96,8 @@ export class TxValuesComponent implements OnInit {
 
   toggleGasPriceRadioButton() {
     console.log('Price Clicked, toggle:', this.gasPriceRadioButton);
-    let newValue = this.manualGasPriceValue;
-    let oldValue = this.lastManualGasPriceValue;
+    const newValue = this.manualGasPriceValue;
+    const oldValue = this.lastManualGasPriceValue;
 
     if (this.gasPriceRadioButton) {
       this.lastManualGasPriceValue = newValue;

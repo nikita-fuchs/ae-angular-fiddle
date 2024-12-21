@@ -15,8 +15,8 @@ import { isValidContractAddress } from '../helpers/utils';
 })
 export class ContractMenuSidebarComponent implements OnInit {
   // deleteme: Testing the modal UI
-  testName: string = 'FooBarContractLOL';
-  testAddress: string = 'ak_1337Cafe....3A7FgK8Hg';
+  testName = 'FooBarContractLOL';
+  testAddress = 'ak_1337Cafe....3A7FgK8Hg';
 
   //Fires when new SDK settings are available(Accounts, )
   sdkSettingsSubscription: Subscription;
@@ -30,13 +30,13 @@ export class ContractMenuSidebarComponent implements OnInit {
   contractDeploymentSubscription: Subscription;
 
   //displays loading icon when deploying contract
-  deploymentLoading: boolean = false;
+  deploymentLoading = false;
 
   // the current compilation error
   currentError: any = {};
 
   // is an init function present in the contract ?
-  initFunctionIsPresent: boolean = true;
+  initFunctionIsPresent = true;
 
   // the address of the existing contract the user wants to interact with.
   addressOfExistingContract: `ct_${string}` | `${string}.chain` = null;
@@ -271,7 +271,7 @@ export class ContractMenuSidebarComponent implements OnInit {
     _hash?: any,
   ) {
     // if only the address is defined, don't call with options.
-    var balance;
+    let balance;
     //console.log("Fetching balan ce for..." + _address);
     if (!_height && !_format && !_hash) {
       try {
@@ -292,7 +292,7 @@ export class ContractMenuSidebarComponent implements OnInit {
   }
 
   checkIfInitFunctionIsPresent(): boolean {
-    var found: boolean = false;
+    let found = false;
 
     this.initACI.functions.forEach((oneFunction) => {
       oneFunction.name == 'init' ? (found = true) : null;

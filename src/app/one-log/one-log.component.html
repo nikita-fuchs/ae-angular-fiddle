@@ -7,13 +7,13 @@
       <div *ngIf="log.type" class="errorbox-icon">
         <i
           class="{{
-            log.type == 'success'
+            log.type === 'success'
               ? 'check circle'
-              : log.type == 'log'
+              : log.type === 'log'
                 ? 'info circle'
-                : log.type == 'error'
+                : log.type === 'error'
                   ? 'bug'
-                  : log.type == 'warn'
+                  : log.type === 'warn'
                     ? 'exclamation triangle'
                     : 'info circle'
           }} icon sidebar-icon"
