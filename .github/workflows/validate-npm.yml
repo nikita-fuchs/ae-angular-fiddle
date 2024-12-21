@@ -14,3 +14,7 @@ jobs:
       - run: npm ci --legacy-peer-deps # TODO: remove after dropping @angular/flex-layout
       - run: npm run lint
       - run: npm run build
+      - run: npm ci
+        working-directory: 'src/app/helpers/generate-nodejs'
+      - run: npm test
+        working-directory: 'src/app/helpers/generate-nodejs'
