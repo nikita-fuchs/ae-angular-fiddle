@@ -2,11 +2,16 @@
 
 ## Install for Linux / Mac
 
-`npm run init`
+```
+npm install
+```
 
 ## Install for Win
 
-`npm run init-win`
+```
+npm install
+npm run init-win
+```
 
 ## Run with
 
