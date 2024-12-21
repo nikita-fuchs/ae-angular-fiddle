@@ -10,7 +10,6 @@
     "lint": "prettier . --check && ng lint",
     "format": "prettier . --write",
     "e2e": "ng e2e",
-    "init-win": "node patch.js",
     "deploy": "npx angular-cli-ghpages"
   },
   "private": true,
