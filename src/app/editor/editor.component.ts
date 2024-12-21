@@ -22,7 +22,6 @@ import { distinctUntilChanged } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { ClipboardService } from 'ngx-clipboard';
-//import { LogMessage as NgxLogMessage } from 'ngx-log-monitor';
 import { CodeFactoryService } from '../code-factory.service';
 import { LocalStorageService } from '../local-storage.service';
 import { AuthService } from '../services/auth/auth.service';
